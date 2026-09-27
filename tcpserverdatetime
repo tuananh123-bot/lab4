@@ -1,0 +1,38 @@
+package lab4bai3;
+import java.io.*;
+import java.net.*;
+import java.nio.charset.StandardCharsets;
+public class bai3tcpserver {
+	public static void main(String[] args) {
+        int port = 2026;
+        try (ServerSocket serverSocket = new ServerSocket(port)) {
+            System.out.println("TCP Server đang chạy tại port " + port);
+
+            while (true) {
+                Socket clientSocket = serverSocket.accept();
+                new Thread(() -> handleClient(clientSocket)).start();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void handleClient(Socket socket) {
+        try (
+            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream(), StandardCharsets.UTF_8));
+            PrintWriter out = new PrintWriter(new OutputStreamWriter(socket.getOutputStream(), StandardCharsets.UTF_8), true)
+        ) {
+            String request;
+            while ((request = in.readLine()) != null) {
+                if (request.trim().equalsIgnoreCase("QUIT")) {
+                    out.println("Đã đóng kết nối.");
+                    break;
+                }
+                String response = DateTimeProcessor.processCommand(request);
+                out.println(response);
+            }
+        } catch (IOException e) {
+            System.err.println("Lỗi kết nối TCP: " + e.getMessage());
+        }
+    }
+}
