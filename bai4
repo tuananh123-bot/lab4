@@ -1,0 +1,30 @@
+package lab4bai1;
+import java.net.*;
+public class udp {
+	public static void main(String[] args) {
+        int port = 3026;
+        try (DatagramSocket socket = new DatagramSocket(port)) {
+            System.out.println("UDP DateTime Server đang chạy ở port " + port);
+            byte[] buffer = new byte[1024];
+
+            while (true) {
+                DatagramPacket requestPacket = new DatagramPacket(buffer, buffer.length);
+                socket.receive(requestPacket); // Đợi gói tin
+
+                String request = new String(requestPacket.getData(), 0, requestPacket.getLength()).trim();
+                System.out.println("Client yêu cầu: " + request);
+
+                String response = DateTimeHandler.processCommand(request);
+                byte[] responseData = response.getBytes();
+
+                DatagramPacket responsePacket = new DatagramPacket(
+                        responseData, responseData.length,
+                        requestPacket.getAddress(), requestPacket.getPort());
+                socket.send(responsePacket);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
+
