@@ -1,0 +1,55 @@
+package lab4bai1;
+import java.net.Inet4Address;
+import java.net.Inet6Address;
+import java.net.InetAddress;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.UnknownHostException;
+
+public class bai1host {
+	public static void main(String[] args) {
+        // Kiểm tra thiếu tham số
+        if (args.length < 2) {
+            System.err.println("Lỗi: Thiếu tham số! Vui lòng nhập đúng: <hostname> <URI>");
+            return;
+        }
+
+        String hostname = args[0];
+        String uriString = args[1];
+
+        System.out.println("=== KẾT QUẢ KIỂM TRA HOSTNAME ===");
+        try {
+            InetAddress[] addresses = InetAddress.getAllByName(hostname);
+            for (InetAddress addr : addresses) {
+                System.out.println("IP: " + addr.getHostAddress());
+                
+                if (addr instanceof Inet4Address) {
+                    System.out.println(" - Loại: IPv4");
+                } else if (addr instanceof Inet6Address) {
+                    System.out.println(" - Loại: IPv6");
+                }
+                
+                System.out.println(" - Loopback: " + addr.isLoopbackAddress());
+                System.out.println(" - Site Local: " + addr.isSiteLocalAddress());
+                System.out.println("---------------------------------");
+            }
+        } catch (UnknownHostException e) {
+            System.err.println("Lỗi: Không thể phân giải hostname '" + hostname + "'");
+        }
+
+        System.out.println("\n=== KẾT QUẢ KIỂM TRA URI ===");
+        try {
+            URI uri = new URI(uriString);
+            System.out.println("URI truyền vào: " + uri.toString());
+            System.out.println("Scheme:   " + uri.getScheme());
+            System.out.println("Host:     " + uri.getHost());
+            System.out.println("Port:     " + uri.getPort());
+            System.out.println("Path:     " + uri.getPath());
+            System.out.println("Query:    " + uri.getQuery());
+            System.out.println("Fragment: " + uri.getFragment());
+        } catch (URISyntaxException e) {
+            System.err.println("Lỗi: URI sai định dạng '" + uriString + "'");
+        }
+    }
+}
+
