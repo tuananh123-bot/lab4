@@ -1,0 +1,31 @@
+package lab4bai3;
+import java.io.*;
+import java.net.*;
+import java.nio.charset.StandardCharsets;
+import java.util.Scanner;
+public class client {
+	public static void main(String[] args) {
+        try (
+            Socket socket = new Socket("localhost", 2026);
+            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream(), StandardCharsets.UTF_8));
+            PrintWriter out = new PrintWriter(new OutputStreamWriter(socket.getOutputStream(), StandardCharsets.UTF_8), true);
+            Scanner scanner = new Scanner(System.in, StandardCharsets.UTF_8.name())
+        ) {
+            System.out.println("Các lệnh hỗ trợ: DATE, TIME, DATETIME, QUIT");
+            while (true) {
+                System.out.print("Nhập lệnh: ");
+                String command = scanner.nextLine();
+                out.println(command);
+
+                String response = in.readLine();
+                if (response == null || command.trim().equalsIgnoreCase("QUIT")) {
+                    System.out.println("Server phản hồi: " + response);
+                    break;
+                }
+                System.out.println("Server phản hồi: " + response);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
