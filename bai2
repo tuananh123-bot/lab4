@@ -1,0 +1,47 @@
+package lab4bai1;
+import java.io.*;
+import java.net.*;
+import java.nio.charset.StandardCharsets;
+public class bai2tcpserver {
+public static void main(String[] args) {
+        int port = 2026;
+        String[] digits = {"không", "một", "hai", "ba", "bốn", "năm", "sáu", "bảy", "tám", "chín"};
+
+        try (ServerSocket serverSocket = new ServerSocket(port)) {
+            System.out.println("Server Digit đang chạy ở port " + port + "...");
+
+            while (true) {
+                Socket clientSocket = serverSocket.accept();
+                System.out.println("Client đã kết nối: " + clientSocket.getInetAddress());
+
+                // Khởi tạo luồng xử lý riêng cho mỗi client để phục vụ đồng thời
+                new Thread(() -> {
+                    try (
+                        BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream(), StandardCharsets.UTF_8));
+                        PrintWriter out = new PrintWriter(new OutputStreamWriter(clientSocket.getOutputStream(), StandardCharsets.UTF_8), true)
+                    ) {
+                        String request;
+                        while ((request = in.readLine()) != null) {
+                            request = request.trim();
+                            if (request.equalsIgnoreCase("QUIT")) {
+                                out.println("Tạm biệt!");
+                                break;
+                            }
+
+                            if (request.length() == 1 && Character.isDigit(request.charAt(0))) {
+                                int num = Integer.parseInt(request);
+                                out.println(digits[num]);
+                            } else {
+                                out.println("ERR INVALID_DIGIT");
+                            }
+                        }
+                    } catch (IOException e) {
+                        System.err.println("Lỗi kết nối với client: " + e.getMessage());
+                    }
+                }).start();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
