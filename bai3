@@ -1,0 +1,23 @@
+package lab4bai1;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+public class bai3tcp {
+
+	public static String processCommand(String cmd) {
+        LocalDateTime now = LocalDateTime.now();
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd MM yyyy");
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH mm ss");
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd MM yyyy HH mm ss");
+
+        switch (cmd.trim().toUpperCase()) {
+            case "DATE":
+                return now.format(dateFormatter);
+            case "TIME":
+                return now.format(timeFormatter);
+            case "DATETIME":
+                return now.format(dateTimeFormatter);
+            default:
+                return "ERR INVALID_COMMAND";
+        }
+    }
+}
